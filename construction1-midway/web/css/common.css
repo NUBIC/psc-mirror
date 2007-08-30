@@ -1,0 +1,126 @@
+
+
+#body {
+    margin: 0.5em 1em;
+}
+
+a {
+    color: #00c;
+}
+
+a:visited {
+    color: #006;
+}
+
+a:hover {
+    color: #33f;
+}
+
+a:active {
+    color: #f00;
+}
+
+#footmenu {
+    margin-top: 2em;
+    padding: 0.5em;
+    border-top: 1px solid #444;
+    text-align: right;
+}
+
+.error {
+    color: #c03;
+}
+
+.odd {
+    background-color: #eee;
+}
+
+.tip {
+    font-size: 80%;
+}
+
+#header {
+    background-color: #fff;
+}
+
+#psc-module {
+    color: #3D3E6A;
+    font-size: 14pt;
+    font-family: "Arial", sans-serif;
+    font-weight: bold;
+    text-align: center;
+    float: right;
+    padding: 11px 1em;
+    height: 23px;
+}
+
+img#cabig-logo {
+    display: block;
+    float: left;
+}
+
+#breadcrumbs {
+    font-size: 10pt;
+    background-color: #444;
+    color: #fff;
+    padding: 6px 8px;
+}
+
+#breadcrumbs a {
+    color: #eee;
+    text-decoration: none;
+    border-bottom: 1px solid #999;
+    padding: 1px;
+}
+
+#breadcrumbs a:hover {
+    background-color: #999;
+    border-bottom-color: #eee;
+}
+
+img.indicator {
+    visibility: hidden;
+}
+
+form#login div.label {
+    width: 35%;
+}
+form#login div.submit {
+    text-align: right;
+}
+form#login {
+    width: 20em;
+}
+
+
+/* IE only */
+* html div.row, * html div.autoclear { height: 1% }
+
+
+/****** MODIFICATIONS TO lightbox.css STYLES */
+
+#lightbox {
+    background-color: #eee;
+    border: 2px outset black;
+    height: auto;
+}
+
+#lightbox h1 {
+    background-color: #000;
+    color: #fff;
+    padding: 0.5em 2em;
+}
+
+#lightbox-content {
+    margin: 1em 2em;
+}
+
+/****** CTMS COMMONS OVERRIDES */
+
+#header {
+    background-image: url("../images/header_BG.png")
+}
+
+#header .background-R {
+    background-image: url("../images/header_BG_R.png")
+}
