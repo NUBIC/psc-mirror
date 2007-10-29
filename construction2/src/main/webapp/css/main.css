@@ -1,0 +1,137 @@
+/*h2 {*/
+    /*margin: 0;*/
+    /*padding: 4px;*/
+    /*font-family: sans-serif;*/
+    /*font-size: 1.3em;*/
+    /*color: white;*/
+    /*background-color: #999;*/
+/*}*/
+
+.subsection {
+    border-bottom: 1px solid #666;
+}
+
+.subsection h3 {
+    /*margin:0;*/
+}
+
+.subcollapsible h3 {
+    cursor: pointer;
+}
+
+.subcollapsible h3 .collapse-icon {
+    font-size:.8em;
+}
+
+
+
+.links-row{
+    margin:0.5em 0 0 0;
+}
+
+.links-row a {
+    margin:0 0.5em 0 0;
+}
+
+.day {
+    padding: 1em 0;
+    position: relative;
+}
+
+.day h3 {
+    float: left;
+    margin: 0;
+    font-size: 1em;
+    padding-top: 2px;
+      /*position: relative;*/
+    border-top:0px;
+    background:none;
+    font-weight:bold;
+  /*background: url(../images/chrome/boxsubhead_BG.png) repeat-x bottom #c9e3eb;*/
+  /*padding: 4px 8px;*/
+}
+
+.day input {
+    margin:0 5px 0 0;
+}
+
+.day ul {
+    margin: 0 0 0 9em;
+    padding: 0;
+}
+
+.day ul li {
+    list-style-type: none;
+    padding: 0 0 5px 0;
+}
+
+.day ul li img {
+    vertical-align:middle;
+}
+
+.epochs-and-arms {
+    position: relative;
+}
+.epoch {
+    float: left;
+    height: 100%;
+    border: 1px solid #666;
+    border-right-width: 0;
+}
+.epoch.last {
+    border-right-width: 1px;
+}
+.epoch h4 {
+    margin: 0;
+    padding: 4px;
+    color: #666;
+}
+
+.arms {
+    padding: 0;
+    margin: 0;
+}
+.arms a {
+    text-decoration: none;
+    color: #444;
+}
+.arms li {
+    display: block;
+    border: 0 solid #ccc;
+    border-width: 1px 0;
+    margin: 4px 0;
+    padding: 3px;
+    /* for IE */
+    height: 1%;
+}
+.arms li:hover {
+    background-color: #ccc !important;
+}
+.arms li:hover a {
+    color: #000;
+}
+.arms li.selected {
+    background-color: #ddd;
+}
+
+a.control, .inplaceeditor-form a  {
+    font-weight: bold;
+    text-decoration: none;
+}
+a.control {
+    padding: 2px;
+    margin: 0 2px;
+    color: #444 !important;
+    border: 1px solid #999;
+    background-color: #ccc;
+}
+a.control:hover {
+    border-color: #444;
+    background-color: #ddd;
+}
+
+.event-details {
+    color: #666;
+    font-style: italic;
+    font-size: 0.9em;
+}
