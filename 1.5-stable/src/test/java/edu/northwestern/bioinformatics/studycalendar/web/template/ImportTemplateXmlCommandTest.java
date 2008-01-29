@@ -1,38 +1,37 @@
 package edu.northwestern.bioinformatics.studycalendar.web.template;
 
 import edu.northwestern.bioinformatics.studycalendar.testing.StudyCalendarTestCase;
-import edu.northwestern.bioinformatics.studycalendar.xml.readers.StudyXMLReader;
-import edu.northwestern.bioinformatics.studycalendar.dao.StudyDao;
-import edu.northwestern.bioinformatics.studycalendar.service.StudyService;
+import edu.northwestern.bioinformatics.studycalendar.xml.writers.StudyXmlSerializer;
 import org.apache.commons.lang.StringUtils;
 import static org.easymock.EasyMock.expect;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.validation.BindException;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.InputStream;
+
 public class ImportTemplateXmlCommandTest extends StudyCalendarTestCase {
 
-    private StudyXMLReader reader;
-    private StudyService studyService;
+    private StudyXmlSerializer serializer;
     private ImportTemplateXmlCommand command;
     private MultipartFile file;
+    private InputStream stream;
 
     protected void setUp() throws Exception {
         super.setUp();
 
-        studyService = registerMockFor(StudyService.class);
-        reader = registerMockFor(StudyXMLReader.class);
+        serializer = registerMockFor(StudyXmlSerializer.class);
         file = registerMockFor(MockMultipartFile.class);
+        stream = registerMockFor(InputStream.class);
 
         command = new ImportTemplateXmlCommand();
-        command.setStudyXMLReader(reader);
-        command.setStudyService(studyService);
         command.setStudyXml(file);
+        command.setStudyXmlSerializer(serializer);
     }
 
     public void testApply() throws Exception {
-        expect(file.getInputStream()).andReturn(null);
-        expect(reader.readAndSave(null)).andReturn(null);
+        expect(file.getInputStream()).andReturn(stream);
+        expect(serializer.readDocument(stream)).andReturn(null);
         replayMocks();
 
         command.apply();

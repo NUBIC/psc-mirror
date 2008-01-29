@@ -70,6 +70,10 @@
         </xsd:sequence>
         <xsd:attribute name="name" type="xsd:string"/>
         <xsd:attribute name="id" type="xsd:string" use="required"/>
+        <xsd:attribute name="start-date" type="xsd:integer" use="required"/>
+        <xsd:attribute name="repetitions" type="xsd:integer" use="required"/>
+        <xsd:attribute name="duration-quantity" type="xsd:integer" use="required"/>
+        <xsd:attribute name="duration-unit" type="xsd:integer" use="required"/>
     </xsd:complexType>
 
     <xsd:element name="planned-activity" type="psc:PlannedActivity"/> 

@@ -1,10 +1,7 @@
 package edu.northwestern.bioinformatics.studycalendar.xml.writers;
 
 import edu.northwestern.bioinformatics.studycalendar.dao.PlannedActivityDao;
-import edu.northwestern.bioinformatics.studycalendar.domain.PlanTreeNode;
-import edu.northwestern.bioinformatics.studycalendar.domain.PlannedActivity;
-import edu.northwestern.bioinformatics.studycalendar.domain.Population;
-import edu.northwestern.bioinformatics.studycalendar.domain.Study;
+import edu.northwestern.bioinformatics.studycalendar.domain.*;
 import org.dom4j.Element;
 
 public class PlannedActivityXmlSerializer extends AbstractPlanTreeNodeXmlSerializer {
@@ -16,10 +13,6 @@ public class PlannedActivityXmlSerializer extends AbstractPlanTreeNodeXmlSeriali
     private static final String CONDITION = "condition";
 
     private PlannedActivityDao plannedActivityDao;
-
-    public PlannedActivityXmlSerializer(Study study) {
-        super(study);
-    }
 
     protected PlanTreeNode<?> nodeInstance() {
         return new PlannedActivity();
@@ -44,7 +37,7 @@ public class PlannedActivityXmlSerializer extends AbstractPlanTreeNodeXmlSeriali
 
         String populationAbbreviation = element.attributeValue(POPULATION);
         if (populationAbbreviation != null) {
-            for (Population population : getStudy().getPopulations()) {
+            for (Population population : study.getPopulations()) {
                 if (populationAbbreviation.equals(population.getAbbreviation())) {
                     ((PlannedActivity) node).setPopulation(population);
                 }
@@ -61,7 +54,7 @@ public class PlannedActivityXmlSerializer extends AbstractPlanTreeNodeXmlSeriali
             element.addAttribute(POPULATION, ((PlannedActivity) node).getPopulation().getAbbreviation());
         }
     }
-
+    
     public void setPlannedActivityDao(PlannedActivityDao plannedActivityDao) {
         this.plannedActivityDao = plannedActivityDao;
     }

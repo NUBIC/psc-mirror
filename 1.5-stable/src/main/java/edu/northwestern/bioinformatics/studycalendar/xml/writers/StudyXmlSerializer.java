@@ -10,8 +10,9 @@ import org.dom4j.Element;
 
 import java.util.List;
 import java.util.Collections;
+import java.util.ArrayList;
 
-public class StudyXmlSerializer extends AbstractStudyCalendarXmlSerializer<Study> {
+public class StudyXmlSerializer extends AbstractStudyCalendarXmlSerializer<Study>{
     // Elements
     public static final String STUDY = "study";
 
@@ -33,7 +34,8 @@ public class StudyXmlSerializer extends AbstractStudyCalendarXmlSerializer<Study
             eStudy.add(ePopulation);
         }
 
-        List<Amendment> amendments = study.getAmendmentsList();
+        //TODO: make independent of order
+        List<Amendment> amendments = new ArrayList(study.getAmendmentsList());
         Collections.reverse(amendments);
         for (Amendment amendment : amendments) {
             Element eAmendment = getAmendmentSerializer(study).createElement(amendment);
@@ -65,15 +67,21 @@ public class StudyXmlSerializer extends AbstractStudyCalendarXmlSerializer<Study
     }
 
     protected PlannedCalendarXmlSerializer getPlannedCalendarXmlSerializer(Study study) {
-        return new PlannedCalendarXmlSerializer(study);
+        PlannedCalendarXmlSerializer plannedCalendarXmlSerializer = (PlannedCalendarXmlSerializer) getBeanFactory().getBean("plannedCalendarXmlSerializer");
+        plannedCalendarXmlSerializer.setStudy(study);
+        return plannedCalendarXmlSerializer;
     }
 
     protected PopulationXmlSerializer getPopulationXmlSerializer(Study study) {
-        return new PopulationXmlSerializer(study);
+        PopulationXmlSerializer populationXmlSerializer = (PopulationXmlSerializer) getBeanFactory().getBean("populationXmlSerializer");
+        populationXmlSerializer.setStudy(study);
+        return populationXmlSerializer;
     }
 
     protected AmendmentXmlSerializer getAmendmentSerializer(Study study) {
-        return new AmendmentXmlSerializer(study);
+        AmendmentXmlSerializer amendmentSerializer = (AmendmentXmlSerializer ) getBeanFactory().getBean("amendmentXmlSerializer");
+        amendmentSerializer.setStudy(study);
+        return amendmentSerializer;
     }
 
     public void setStudyDao(StudyDao studyDao) {
