@@ -19,21 +19,28 @@ public class ImportTemplateService {
 
     public void importTemplate (InputStream stream) {
         Study study = studyXmlSerializer.readDocument(stream);
-        List<Activity> activityList = new ArrayList<Activity>();
 
         for (Epoch epoch : study.getPlannedCalendar().getEpochs()) {
             for (StudySegment segment : epoch.getStudySegments()) {
                 for (Period period : segment.getPeriods()) {
                     for (PlannedActivity plannedActivity : period.getPlannedActivities()) {
-                        activityList.add(plannedActivity.getActivity());
+                        Activity activity = plannedActivity.getActivity();
+
+                        Activity existingActivity = activityDao.getByCodeAndSourceName(activity.getCode(), activity.getSource().getName());
+                        if (existingActivity != null) {
+                            plannedActivity.setActivity(existingActivity);
+                        } else {
+                            Source existingSource = sourceDao.getByName(activity.getSource().getName());
+                            if (existingSource != null) {
+                                activity.setSource(existingSource);
+                            }
+                        }
+
+                        sourceDao.save(plannedActivity.getActivity().getSource());
+                        activityDao.save(plannedActivity.getActivity());
                     }
                 }
             }
-        }
-
-        for (Activity activity : activityList) {
-            activityDao.save(activity);
-            sourceDao.save(activity.getSource());
         }
 
         studyService.save(study);
