@@ -9,8 +9,8 @@ import org.dom4j.Element;
 import java.util.List;
 
 public class AddXmlSerializer extends AbstractChildrenChangeXmlSerializer {
-    private static final String ADD = "add";
-    private static final String INDEX = "index";
+    public static final String ADD = "add";
+    public static final String INDEX = "index";
 
     protected Change changeInstance() {
         return new Add();
@@ -33,7 +33,10 @@ public class AddXmlSerializer extends AbstractChildrenChangeXmlSerializer {
     }
 
     protected void setAdditionalProperties(final Element element, Change add) {
-        ((Add)add).setIndex(new Integer(element.attributeValue(INDEX)));
+        String index = element.attributeValue(INDEX);
+        if (index != null){
+            ((Add)add).setIndex(new Integer(index));
+        }
         List<Element> ePlanTreeNodes = element.elements();
         Element ePlanTreeNode = ePlanTreeNodes.get(0);
         AbstractPlanTreeNodeXmlSerializer serializer = getPlanTreeNodeSerializerFactory().createXmlSerializer(ePlanTreeNode);

@@ -2,6 +2,7 @@ package edu.northwestern.bioinformatics.studycalendar.web.template;
 
 import edu.northwestern.bioinformatics.studycalendar.testing.StudyCalendarTestCase;
 import edu.northwestern.bioinformatics.studycalendar.xml.writers.StudyXmlSerializer;
+import edu.northwestern.bioinformatics.studycalendar.service.ImportTemplateService;
 import org.apache.commons.lang.StringUtils;
 import static org.easymock.EasyMock.expect;
 import org.springframework.mock.web.MockMultipartFile;
@@ -12,26 +13,26 @@ import java.io.InputStream;
 
 public class ImportTemplateXmlCommandTest extends StudyCalendarTestCase {
 
-    private StudyXmlSerializer serializer;
     private ImportTemplateXmlCommand command;
     private MultipartFile file;
     private InputStream stream;
+    private ImportTemplateService importTemplateService;
 
     protected void setUp() throws Exception {
         super.setUp();
 
-        serializer = registerMockFor(StudyXmlSerializer.class);
         file = registerMockFor(MockMultipartFile.class);
         stream = registerMockFor(InputStream.class);
+        importTemplateService = registerMockFor(ImportTemplateService.class);
 
         command = new ImportTemplateXmlCommand();
         command.setStudyXml(file);
-        command.setStudyXmlSerializer(serializer);
+        command.setImportTemplateService(importTemplateService);
     }
 
     public void testApply() throws Exception {
         expect(file.getInputStream()).andReturn(stream);
-        expect(serializer.readDocument(stream)).andReturn(null);
+        importTemplateService.importTemplate(stream);
         replayMocks();
 
         command.apply();

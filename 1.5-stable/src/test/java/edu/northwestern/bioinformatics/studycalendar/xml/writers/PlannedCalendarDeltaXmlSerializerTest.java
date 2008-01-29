@@ -10,10 +10,12 @@ import edu.northwestern.bioinformatics.studycalendar.domain.delta.Add;
 import edu.northwestern.bioinformatics.studycalendar.domain.delta.Delta;
 import edu.northwestern.bioinformatics.studycalendar.service.TemplateService;
 import edu.northwestern.bioinformatics.studycalendar.testing.StudyCalendarXmlTestCase;
-import org.dom4j.Element;
 import org.dom4j.DocumentHelper;
-import org.easymock.EasyMock;
+import org.dom4j.Element;
+import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
+
+import java.util.Collections;
 
 public class PlannedCalendarDeltaXmlSerializerTest extends StudyCalendarXmlTestCase {
     private AbstractDeltaXmlSerializer serializer;
@@ -83,7 +85,8 @@ public class PlannedCalendarDeltaXmlSerializerTest extends StudyCalendarXmlTestC
         expect(element.attributeValue("id")).andReturn("grid0");
         expect(deltaDao.getByGridId("grid0")).andReturn(null);
         expect(element.attributeValue("node-id")).andReturn("grid1");
-        expect(templateService.findEquivalentChild(EasyMock.eq(study), eqGridId(calendar))).andReturn((PlanTreeNode)calendar);
+        expect(templateService.findEquivalentChild(eq(study), eqGridId(calendar))).andReturn((PlanTreeNode)calendar);
+        expect(element.elements()).andReturn(Collections.emptyList());
         replayMocks();
 
         Delta actual = serializer.readElement(element);

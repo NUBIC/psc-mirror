@@ -9,6 +9,7 @@ import edu.northwestern.bioinformatics.studycalendar.domain.delta.ChangeAction;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.BeansException;
+import org.dom4j.Element;
 
 public class ChangeXmlSerializerFactory implements BeanFactoryAware {
     private Study study;
@@ -29,6 +30,20 @@ public class ChangeXmlSerializerFactory implements BeanFactoryAware {
             return getXmlSerialzier(PROPERTY_CHANGE_SERIALIZER);
         } else {
             throw new StudyCalendarError("Problem processing template. Change is not recognized: %s", change.getAction());
+        }
+    }
+
+    public AbstractChangeXmlSerializer createXmlSerializer(final Element eChange, final PlanTreeNode<?> deltaNode) {
+        if ((AddXmlSerializer.ADD).equals(eChange.getName())) {
+            return getXmlSerialzier(ADD_SERIALIZER, ((PlanTreeInnerNode)deltaNode).childClass());
+        } else if ((RemoveXmlSerializer.REMOVE).equals(eChange.getName())) {
+            return getXmlSerialzier(REMOVE_SERIALIZER, ((PlanTreeInnerNode)deltaNode).childClass());
+        } else if ((ReorderXmlSerializer.REORDER).equals(eChange.getName())) {
+            return getXmlSerialzier(REORDER_SERIALIZER, ((PlanTreeInnerNode)deltaNode).childClass());
+       } else if ((PropertyChangeXmlSerializer.PROPERTY_CHANGE).equals(eChange.getName())) {
+            return getXmlSerialzier(PROPERTY_CHANGE_SERIALIZER);
+        } else {
+            throw new StudyCalendarError("Problem processing template. Change is not recognized: %s", eChange.getName());
         }
     }
 

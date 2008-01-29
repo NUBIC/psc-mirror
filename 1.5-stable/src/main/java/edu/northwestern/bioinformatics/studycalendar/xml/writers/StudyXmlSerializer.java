@@ -6,6 +6,7 @@ import edu.northwestern.bioinformatics.studycalendar.domain.Study;
 import edu.northwestern.bioinformatics.studycalendar.domain.Population;
 import edu.northwestern.bioinformatics.studycalendar.domain.delta.Amendment;
 import edu.northwestern.bioinformatics.studycalendar.xml.AbstractStudyCalendarXmlSerializer;
+import edu.northwestern.bioinformatics.studycalendar.service.DeltaService;
 import org.dom4j.Element;
 
 import java.util.List;
@@ -20,6 +21,7 @@ public class StudyXmlSerializer extends AbstractStudyCalendarXmlSerializer<Study
     public static final String ASSIGNED_IDENTIFIER = "assigned-identifier";
 
     private StudyDao studyDao;
+    private DeltaService deltaService;
 
     public Element createElement(Study study) {
         Element eStudy = element(STUDY)
@@ -67,6 +69,7 @@ public class StudyXmlSerializer extends AbstractStudyCalendarXmlSerializer<Study
             for (Element eAmendment : eAmendments) {
                 Amendment amendment = getAmendmentSerializer(study).readElement(eAmendment);
                 study.setAmendment(amendment);
+                deltaService.apply(study, amendment);
             }
         }
         return study;
@@ -92,5 +95,9 @@ public class StudyXmlSerializer extends AbstractStudyCalendarXmlSerializer<Study
 
     public void setStudyDao(StudyDao studyDao) {
         this.studyDao = studyDao;
+    }
+
+    public void setDeltaService(DeltaService deltaService) {
+        this.deltaService = deltaService;
     }
 }

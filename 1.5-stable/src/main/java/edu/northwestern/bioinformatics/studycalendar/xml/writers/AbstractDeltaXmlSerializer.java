@@ -51,8 +51,14 @@ public abstract class AbstractDeltaXmlSerializer extends AbstractStudyCalendarXm
             if (node == null) {
                 throw new StudyCalendarError("Problem importing template. Cannot find Node for grid id: %s", gridId);
             }
-            // TODO: Add changes
             delta.setNode(node);
+
+            List<Element> eChanges = element.elements();
+            for (Element eChange : eChanges) {
+                AbstractChangeXmlSerializer changeSerializer = getChangeXmlSerializerFactory().createXmlSerializer(eChange,  node);
+                Change change = changeSerializer.readElement(eChange);
+                delta.addChange(change);
+            }
         }
         return delta;
     }

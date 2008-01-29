@@ -9,6 +9,11 @@ import org.dom4j.Element;
 public class PlannedCalendarXmlSerializer extends AbstractPlanTreeNodeXmlSerializer {
     public static final String PLANNED_CALENDAR = "planned-calendar";
     private PlannedCalendarDao plannedCalendarDao;
+    private boolean serializeEpoch;
+
+    public PlannedCalendarXmlSerializer() {
+        serializeEpoch = false;
+    }
 
     protected PlanTreeNode<?> nodeInstance() {
         return new PlannedCalendar();
@@ -23,9 +28,12 @@ public class PlannedCalendarXmlSerializer extends AbstractPlanTreeNodeXmlSeriali
     }
 
     protected AbstractPlanTreeNodeXmlSerializer getChildSerializer() {
-        EpochXmlSerializer serializer = (EpochXmlSerializer) getBeanFactory().getBean("epochXmlSerializer");
-        serializer.setStudy(study);
-        return serializer;
+        if (serializeEpoch) {
+            EpochXmlSerializer serializer = (EpochXmlSerializer) getBeanFactory().getBean("epochXmlSerializer");
+            serializer.setStudy(study);
+            return serializer;
+        }
+        return null;
     }
     
     protected void addChildrenElements(PlanTreeInnerNode<?, PlanTreeNode<?>, ?> node, Element eStudySegment) {
@@ -39,5 +47,10 @@ public class PlannedCalendarXmlSerializer extends AbstractPlanTreeNodeXmlSeriali
 
     public void setPlannedCalendarDao(PlannedCalendarDao plannedCalendarDao) {
         this.plannedCalendarDao = plannedCalendarDao;
+    }
+
+
+    public void setSerializeEpoch(boolean serializeEpoch) {
+        this.serializeEpoch = serializeEpoch;
     }
 }

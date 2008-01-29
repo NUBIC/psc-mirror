@@ -4,7 +4,7 @@ import edu.northwestern.bioinformatics.studycalendar.domain.delta.Change;
 import edu.northwestern.bioinformatics.studycalendar.domain.delta.Remove;
 
 public class RemoveXmlSerializer extends AbstractChildrenChangeXmlSerializer {
-    private static final String REMOVE = "remove";
+    public static final String REMOVE = "remove";
 
     protected Change changeInstance() {
         return new Remove();
