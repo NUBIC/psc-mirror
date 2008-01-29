@@ -1,8 +1,8 @@
 package edu.northwestern.bioinformatics.studycalendar.web.template;
 
+import edu.northwestern.bioinformatics.studycalendar.service.ImportTemplateService;
 import edu.northwestern.bioinformatics.studycalendar.xml.validators.Schema;
 import static edu.northwestern.bioinformatics.studycalendar.xml.validators.XMLValidator.TEMPLATE_VALIDATOR_INSTANCE;
-import edu.northwestern.bioinformatics.studycalendar.xml.writers.StudyXmlSerializer;
 import edu.nwu.bioinformatics.commons.spring.Validatable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,10 +16,10 @@ public class ImportTemplateXmlCommand implements Validatable {
     private static final Logger log = LoggerFactory.getLogger(ImportActivitiesCommand.class);
 
     MultipartFile studyXml;
-    private StudyXmlSerializer studyXmlSerializer;
+    private ImportTemplateService service;
 
     public void apply() throws Exception {
-        studyXmlSerializer.readDocument(studyXml.getInputStream());
+        service.importTemplate(studyXml.getInputStream());
     }
 
     public void validate(Errors errors) {
@@ -45,8 +45,8 @@ public class ImportTemplateXmlCommand implements Validatable {
     public MultipartFile getStudyXml() {
         return studyXml;
     }
-    
-    public void setStudyXmlSerializer(StudyXmlSerializer studyXmlSerializer) {
-        this.studyXmlSerializer = studyXmlSerializer;
+
+    public void setImportTemplateService(ImportTemplateService service) {
+        this.service = service;
     }
 }

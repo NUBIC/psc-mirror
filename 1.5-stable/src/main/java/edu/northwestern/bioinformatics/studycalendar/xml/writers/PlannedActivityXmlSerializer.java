@@ -2,9 +2,11 @@ package edu.northwestern.bioinformatics.studycalendar.xml.writers;
 
 import edu.northwestern.bioinformatics.studycalendar.dao.PlannedActivityDao;
 import edu.northwestern.bioinformatics.studycalendar.domain.*;
+import edu.northwestern.bioinformatics.studycalendar.xml.XsdElement;
 import org.dom4j.Element;
 
 public class PlannedActivityXmlSerializer extends AbstractPlanTreeNodeXmlSerializer {
+    private ActivityXmlSerializer activityXmlSerializer;
     public static final String PLANNED_ACTIVITY = "planned-activity";
 
     public static final String POPULATION = "population";
@@ -43,6 +45,9 @@ public class PlannedActivityXmlSerializer extends AbstractPlanTreeNodeXmlSeriali
                 }
             }
         }
+
+        Activity activity = activityXmlSerializer.readElement(element.element(XsdElement.ACTIVITY.xmlName()));
+        ((PlannedActivity) node).setActivity(activity);
     }
 
     protected void addAdditionalElementAttributes(final PlanTreeNode<?> node, Element element) {
@@ -53,9 +58,16 @@ public class PlannedActivityXmlSerializer extends AbstractPlanTreeNodeXmlSeriali
         if (population != null) {
             element.addAttribute(POPULATION, ((PlannedActivity) node).getPopulation().getAbbreviation());
         }
+
+        Element eActivity = activityXmlSerializer.createElement(((PlannedActivity) node).getActivity());
+        element.add(eActivity);
     }
     
     public void setPlannedActivityDao(PlannedActivityDao plannedActivityDao) {
         this.plannedActivityDao = plannedActivityDao;
+    }
+
+    public void setActivityXmlSerializer(ActivityXmlSerializer activityXmlSerializer) {
+        this.activityXmlSerializer = activityXmlSerializer;
     }
 }

@@ -62,6 +62,12 @@ public class StudyXmlSerializer extends AbstractStudyCalendarXmlSerializer<Study
             Element eCalendar = element.element(PlannedCalendarXmlSerializer.PLANNED_CALENDAR);
             PlannedCalendar calendar = (PlannedCalendar) getPlannedCalendarXmlSerializer(study).readElement(eCalendar);
             study.setPlannedCalendar(calendar);
+
+            List<Element> eAmendments = element.elements(AmendmentXmlSerializer.AMENDMENT);
+            for (Element eAmendment : eAmendments) {
+                Amendment amendment = getAmendmentSerializer(study).readElement(eAmendment);
+                study.setAmendment(amendment);
+            }
         }
         return study;
     }

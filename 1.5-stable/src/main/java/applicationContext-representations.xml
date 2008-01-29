@@ -45,6 +45,9 @@
     <bean id="plannedActivityXmlSerializer" autowire="byName" scope="prototype"
           class="edu.northwestern.bioinformatics.studycalendar.xml.writers.PlannedActivityXmlSerializer"/>
 
+    <bean id="activityXmlSerializer" autowire="byName"
+          class="edu.northwestern.bioinformatics.studycalendar.xml.writers.ActivityXmlSerializer"/>
+
     <!-- Delta Serialiers -->
     <bean id="plannedCalendarDeltaXmlSerializer" autowire="byName" scope="prototype"
           class="edu.northwestern.bioinformatics.studycalendar.xml.writers.PlannedCalendarDeltaXmlSerializer"/>

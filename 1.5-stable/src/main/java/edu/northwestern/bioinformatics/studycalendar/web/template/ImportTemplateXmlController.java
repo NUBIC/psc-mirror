@@ -1,7 +1,7 @@
 package edu.northwestern.bioinformatics.studycalendar.web.template;
 
+import edu.northwestern.bioinformatics.studycalendar.service.ImportTemplateService;
 import edu.northwestern.bioinformatics.studycalendar.web.PscSimpleFormController;
-import edu.northwestern.bioinformatics.studycalendar.xml.writers.StudyXmlSerializer;
 import edu.nwu.bioinformatics.commons.spring.ValidatableValidator;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.validation.BindException;
@@ -11,8 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 public class ImportTemplateXmlController extends PscSimpleFormController {
-    private StudyXmlSerializer studyXmlSerializer;
-
+    private ImportTemplateService importTemplateService;
 
     public ImportTemplateXmlController() {
         setCommandClass(ImportTemplateXmlCommand.class);
@@ -32,13 +31,13 @@ public class ImportTemplateXmlController extends PscSimpleFormController {
 
     protected ImportTemplateXmlCommand formBackingObject(HttpServletRequest httpServletRequest) throws Exception {
         ImportTemplateXmlCommand command = new ImportTemplateXmlCommand();
-        command.setStudyXmlSerializer(studyXmlSerializer);
+        command.setImportTemplateService(importTemplateService);
         return command;
     }
 
     //// Field setters
     @Required
-    public void setStudyXmlSerializer(StudyXmlSerializer studyXmlSerializer) {
-        this.studyXmlSerializer = studyXmlSerializer;
+    public void setImportTemplateService(ImportTemplateService importTemplateService) {
+        this.importTemplateService = importTemplateService;
     }
 }
