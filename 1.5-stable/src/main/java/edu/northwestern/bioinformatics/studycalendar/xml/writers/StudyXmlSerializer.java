@@ -68,8 +68,7 @@ public class StudyXmlSerializer extends AbstractStudyCalendarXmlSerializer<Study
             List<Element> eAmendments = element.elements(AmendmentXmlSerializer.AMENDMENT);
             for (Element eAmendment : eAmendments) {
                 Amendment amendment = getAmendmentSerializer(study).readElement(eAmendment);
-                study.setAmendment(amendment);
-                deltaService.apply(study, amendment);
+                study.pushAmendment(amendment);
             }
         }
         return study;

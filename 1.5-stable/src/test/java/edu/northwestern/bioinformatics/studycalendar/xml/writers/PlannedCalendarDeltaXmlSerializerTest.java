@@ -85,7 +85,6 @@ public class PlannedCalendarDeltaXmlSerializerTest extends StudyCalendarXmlTestC
         expect(element.attributeValue("id")).andReturn("grid0");
         expect(deltaDao.getByGridId("grid0")).andReturn(null);
         expect(element.attributeValue("node-id")).andReturn("grid1");
-        expect(templateService.findEquivalentChild(eq(study), eqGridId(calendar))).andReturn((PlanTreeNode)calendar);
         expect(element.elements()).andReturn(Collections.emptyList());
         replayMocks();
 

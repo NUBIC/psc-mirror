@@ -47,10 +47,6 @@ public abstract class AbstractDeltaXmlSerializer extends AbstractStudyCalendarXm
 
             PlanTreeNode<?> node = nodeInstance();
             node.setGridId(element.attributeValue(NODE_ID));
-            node = templateService.findEquivalentChild(study, node);
-            if (node == null) {
-                throw new StudyCalendarError("Problem importing template. Cannot find Node for grid id: %s", gridId);
-            }
             delta.setNode(node);
 
             List<Element> eChanges = element.elements();

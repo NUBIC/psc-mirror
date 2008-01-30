@@ -25,7 +25,7 @@ public class AddXmlSerializer extends AbstractChildrenChangeXmlSerializer {
         if (add.getIndex() != null) {
             element.addAttribute(INDEX, add.getIndex().toString());
         }
-//        PlanTreeNode<?> planTreeNode = add.getChild();
+
         PlanTreeNode<?> child = (PlanTreeNode<?>) getChild(((ChildrenChange)change).getChildId(), childClass);
         AbstractPlanTreeNodeXmlSerializer serializer = getPlanTreeNodeSerializerFactory().createXmlSerializer(child);
         Element ePlanTreeNode = serializer.createElement(child);
@@ -37,6 +37,7 @@ public class AddXmlSerializer extends AbstractChildrenChangeXmlSerializer {
         if (index != null){
             ((Add)add).setIndex(new Integer(index));
         }
+        
         List<Element> ePlanTreeNodes = element.elements();
         Element ePlanTreeNode = ePlanTreeNodes.get(0);
         AbstractPlanTreeNodeXmlSerializer serializer = getPlanTreeNodeSerializerFactory().createXmlSerializer(ePlanTreeNode);

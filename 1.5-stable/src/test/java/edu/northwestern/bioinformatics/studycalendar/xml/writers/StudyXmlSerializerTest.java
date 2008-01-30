@@ -96,7 +96,6 @@ public class StudyXmlSerializerTest extends StudyCalendarXmlTestCase {
 
         expect(element.elements("amendment")).andReturn(Collections.singletonList(element));
         expect(amendmentSerializer.readElement(element)).andReturn(amendment);
-        deltaService.apply(eqName(study), eq(amendment));
 
         // Need to cast calendar to PlanTreeNode because of EasyMockBug
         expect(plannedCalendarSerializer.readElement(element)).andReturn((PlanTreeNode) calendar);
