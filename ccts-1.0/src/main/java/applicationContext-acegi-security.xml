@@ -178,9 +178,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
         <property name="authenticationManager">
             <ref bean="authenticationManager"/>
         </property>
-        <property name="authenticationFailureUrl">
-            <value>/decorated-error.jsp</value>
-        </property>
+        <property name="authenticationFailureUrl" value="/public/login?login_error=1"/>
         <property name="defaultTargetUrl">
             <value>/</value>
         </property>
