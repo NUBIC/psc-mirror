@@ -15,15 +15,14 @@
 	
 	<property name="deploy.lib.dir" value="${env.CATALINA_HOME}/webapps/wsrf/WEB-INF/lib"/>
 	<property name="deploy.etc.ext.dir" value="${env.CATALINA_HOME}/webapps/wsrf/WEB-INF/etc/cagrid_AdverseEventConsumer"/>	
-	
-	<taskdef name="dbunit" classname="org.dbunit.ant.DbUnitTask"> </taskdef>
 
 	
     <target name="get-jars">
 
+        
         <mkdir dir="ext/lib"/>
         <ant dir="../.." antfile="build.xml" target="compile" inheritAll="false"/>
-        <jar basedir="../../web/WEB-INF/classes" destfile="ext/lib/psc.jar" includes="**/*"/>
+        <jar basedir="../../src/main/webapp/WEB-INF/classes" destfile="ext/lib/psc.jar" includes="**/*"/>
 
         <copy todir="ext/lib" overwrite="true">
             <!--
@@ -33,8 +32,8 @@
             </fileset>
             -->
             
-            <fileset dir="../../web/WEB-INF/lib">
-                <include name="activation-1.0.2.jar"/>
+   <fileset dir="../../src/main/webapp/WEB-INF/lib">
+                         <include name="activation-1.0.2.jar"/>
                 <include name="antlr-2.7.6.jar"/>
                 <include name="asm-attr.jar"/>
                 <include name="asm.jar"/>
