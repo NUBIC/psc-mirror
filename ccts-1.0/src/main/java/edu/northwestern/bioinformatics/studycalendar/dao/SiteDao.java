@@ -1,12 +1,11 @@
 package edu.northwestern.bioinformatics.studycalendar.dao;
 
-import java.io.Serializable;
-import java.util.List;
-
-import org.springframework.transaction.annotation.Transactional;
-
 import edu.northwestern.bioinformatics.studycalendar.domain.Site;
 import edu.nwu.bioinformatics.commons.CollectionUtils;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.io.Serializable;
+import java.util.List;
 
 /**
  * @author Padmaja Vedula
@@ -31,7 +30,8 @@ public class SiteDao extends StudyCalendarMutableDomainObjectDao<Site> implement
     }
 
     public Site getByAssignedIdentifier(final String assignedIdentifier) {
-        List<Site> results = getHibernateTemplate().find("from Site where assignedIdentifier= ?", assignedIdentifier);
+        List<Site> results = getHibernateTemplate().find("from Site where assignedIdentifier= ? or " +
+                "(assignedIdentifier=null and name=?)", new String[]{assignedIdentifier, assignedIdentifier});
         return CollectionUtils.firstElement(results);
     }
 
