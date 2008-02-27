@@ -249,7 +249,13 @@ public class SubjectService {
 
         int year = dateCalendar.get(Calendar.YEAR);
         Calendar holidayCalendar = Calendar.getInstance();
+
+        //site may not have been initialized..so initialize it
+        siteService.initialize(site);
+
         List<Holiday> holidayList = site.getHolidaysAndWeekends();
+
+
 
         for (Holiday holiday: holidayList) {
             // TODO: instanceof indicates abstraction failure -- this logic should be in each BlackoutDate class

@@ -1,8 +1,10 @@
 package edu.northwestern.bioinformatics.studycalendar.dao;
 
 import edu.northwestern.bioinformatics.studycalendar.domain.Site;
+import edu.northwestern.bioinformatics.studycalendar.domain.Holiday;
 import edu.nwu.bioinformatics.commons.CollectionUtils;
 import org.springframework.transaction.annotation.Transactional;
+import org.hibernate.Hibernate;
 
 import java.io.Serializable;
 import java.util.List;
@@ -23,6 +25,14 @@ public class SiteDao extends StudyCalendarMutableDomainObjectDao<Site> implement
         return getHibernateTemplate().find("from Site");
     }
 
+    public void initialize(Site site) {
+        Hibernate.initialize(site);
+        Hibernate.initialize(site.getHolidaysAndWeekends());
+        for (Holiday holiday : site.getHolidaysAndWeekends()) {
+            Hibernate.initialize(holiday);
+
+        }
+    }
     // TODO: this method assumes success
     public Site getByName(final String name) {
         List<Site> results = getHibernateTemplate().find("from Site where name= ?", name);
