@@ -26,12 +26,15 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Assumptions: 1. Site should already be existing in DB..
  *
  * @author <a href="mailto:saurabh.agrawal@semanticbits.com>Saurabh Agrawal</a>
  */
+
+@Transactional(readOnly = false)
 public class PSCStudyConsumer implements StudyConsumerI {
 
     private static final Log logger = LogFactory.getLog(PSCStudyConsumer.class);

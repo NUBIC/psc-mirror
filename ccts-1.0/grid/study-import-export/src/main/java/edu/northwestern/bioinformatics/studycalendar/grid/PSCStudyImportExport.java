@@ -9,6 +9,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Required;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.ByteArrayInputStream;
 import java.rmi.RemoteException;
@@ -16,6 +17,8 @@ import java.rmi.RemoteException;
 /**
  * @author Saurabh Agrawal
  */
+
+@Transactional(readOnly = true)
 public class PSCStudyImportExport implements StudyImportExport {
 
     private static final Log logger = LogFactory.getLog(PSCStudyImportExport.class);
@@ -54,6 +57,7 @@ public class PSCStudyImportExport implements StudyImportExport {
 
     }
 
+    @Transactional(readOnly = false)
     public void importStudy(String studyXml) throws RemoteException {
 
         if (studyXml == null || StringUtils.isBlank(studyXml) || studyXml.getBytes() == null) {
