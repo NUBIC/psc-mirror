@@ -17,7 +17,7 @@ import java.io.IOException;
  * {@link org.acegisecurity.util.FilterChainProxy} in that it receives the list of
  * filters in its constructor, instead of using an elaborate filter definition source.
  * <p>
- * The filters of which this filter are composed will not have their {@link #init}
+ * The filters of which this filter is composed will not have their {@link #init}
  * or {@link #destroy} methods invoked.
  *
  * @author Rhett Sutphin
@@ -41,7 +41,7 @@ public class MultipleFilterFilter implements Filter {
 
     /**
      * This class is heavily influenced by the same-named inner class in
-     * {@link org.acegisecurity.util.FilterChainProxy} *
+     * {@link org.acegisecurity.util.FilterChainProxy}.
      */
     private class VirtualFilterChain implements FilterChain {
         private FilterChain targetFilterChain;
@@ -61,7 +61,7 @@ public class MultipleFilterFilter implements Filter {
                 if (log.isDebugEnabled()) {
                     log.debug(" at position " + currentPosition + " of "
                         + filters.length + " in additional filter chain; firing Filter: '"
-                        + filters[currentPosition - 1] + "'");
+                        + filters[currentPosition - 1] + '\'');
                 }
 
                 filters[currentPosition - 1].doFilter(request, response, this);
