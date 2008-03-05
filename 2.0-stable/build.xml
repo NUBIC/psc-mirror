@@ -409,10 +409,10 @@
 
     <!-- ARTIFACT CREATION -->
 
-    <target name="jar.security-plugin-api" depends="webapp">
+    <target name="jar.security-plugin-api" depends="compile">
         <mkdir dir="dist"/>
         <property name="security-plugin-api-jarname" value="${application-short-name}-security-plugin-api.jar"/>
-        <jar destfile="dist/${security-plugin-api-jarname}" basedir="${build-dir.webapp}/WEB-INF/classes">
+        <jar destfile="dist/${security-plugin-api-jarname}" basedir="${build-dir.main}">
             <include name="edu/northwestern/bioinformatics/studycalendar/security/plugin/**/*"/>
             <include name="edu/northwestern/bioinformatics/studycalendar/tools/spring/**/*"/>
             <include name="**/*Exception.class"/>
