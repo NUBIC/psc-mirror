@@ -6,11 +6,13 @@ import static edu.northwestern.bioinformatics.studycalendar.security.Authenticat
 import edu.northwestern.bioinformatics.studycalendar.security.plugin.KnownAuthenticationSystem;
 import edu.northwestern.bioinformatics.studycalendar.utils.accesscontrol.AccessControl;
 import edu.northwestern.bioinformatics.studycalendar.utils.breadcrumbs.DefaultCrumb;
-import edu.northwestern.bioinformatics.studycalendar.web.ControllerTools;
 import edu.northwestern.bioinformatics.studycalendar.web.PscAbstractCommandController;
 import edu.nwu.bioinformatics.commons.spring.ValidatableValidator;
+import gov.nih.nci.cabig.ctms.tools.configuration.ConfigurationProperty;
+import gov.nih.nci.cabig.ctms.tools.configuration.ConfigurationPropertyEditor;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.validation.BindException;
+import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,7 +26,6 @@ import java.util.Map;
 @AccessControl(roles = Role.SYSTEM_ADMINISTRATOR)
 public class AuthenticationSystemConfigurationController extends PscAbstractCommandController<AuthenticationSystemConfigurationCommand> {
     private AuthenticationSystemConfiguration authenticationSystemConfiguration;
-    private ControllerTools controllerTools;
 
     public AuthenticationSystemConfigurationController() {
         setCrumb(new DefaultCrumb("Configure authentication system"));
@@ -47,6 +48,20 @@ public class AuthenticationSystemConfigurationController extends PscAbstractComm
         return !isSubmit(request);
     }
 
+    @Override
+    @SuppressWarnings({ "unchecked" })
+    // mostly copied from BaseCommandController; used instead of initBinder in order to have access to the command
+    protected ServletRequestDataBinder createBinder(HttpServletRequest request, Object oCommand) throws Exception {
+        AuthenticationSystemConfigurationCommand command = (AuthenticationSystemConfigurationCommand) oCommand;
+        ServletRequestDataBinder binder = new ServletRequestDataBinder(oCommand, getCommandName());
+        prepareBinder(binder);
+        for (ConfigurationProperty<?> property : command.getWorkConfiguration().getProperties().getAll()) {
+            binder.registerCustomEditor(Object.class, "conf[" + property.getKey() + "].value",
+                new ConfigurationPropertyEditor(property));
+        }
+        return binder;
+    }
+
     private boolean isSubmit(HttpServletRequest request) {
         return !"GET".equals(request.getMethod());
     }
@@ -66,7 +81,7 @@ public class AuthenticationSystemConfigurationController extends PscAbstractComm
         model.put("currentAuthenticationSystemDisplayName",
             isCustom ? system : KnownAuthenticationSystem.valueOf(system).getDisplayName());
 
-        if (controllerTools.isAjaxRequest(request)) {
+        if (getControllerTools().isAjaxRequest(request)) {
             return new ModelAndView("admin/ajax/updateSelectedAuthenticationSystem", model);
         } else if (isSubmit(request) && !errors.hasErrors()) {
             command.apply();
@@ -80,9 +95,5 @@ public class AuthenticationSystemConfigurationController extends PscAbstractComm
 
     public void setAuthenticationSystemConfiguration(AuthenticationSystemConfiguration authenticationSystemConfiguration) {
         this.authenticationSystemConfiguration = authenticationSystemConfiguration;
-    }
-
-    public void setControllerTools(ControllerTools controllerTools) {
-        this.controllerTools = controllerTools;
     }
 }
