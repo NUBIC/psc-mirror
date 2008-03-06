@@ -11,6 +11,10 @@ public class XsdElementTest extends StudyCalendarTestCase {
         assertEquals("activity", XsdElement.ACTIVITY.xmlName());
     }
     
+    public void testXmlNameDefaultSubsDashesForUnderscores() throws Exception {
+        assertEquals("amendment-approvals", XsdElement.AMENDMENT_APPROVALS.xmlName());
+    }
+
     public void testExplicitXmlNameOverrides() throws Exception {
         assertEquals("source", XsdElement.ACTIVITY_SOURCE.xmlName());
     }
