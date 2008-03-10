@@ -5,7 +5,9 @@ import edu.northwestern.bioinformatics.studycalendar.service.StudyService;
 import edu.northwestern.bioinformatics.studycalendar.service.TemplateSkeletonCreator;
 import static edu.northwestern.bioinformatics.studycalendar.service.TemplateSkeletonCreatorTest.*;
 import edu.northwestern.bioinformatics.studycalendar.testing.StudyCalendarTestCase;
+import edu.northwestern.bioinformatics.studycalendar.dao.StudyDao;
 import static org.easymock.classextension.EasyMock.notNull;
+import static org.easymock.EasyMock.expect;
 
 /**
  * @author Rhett Sutphin
@@ -22,6 +24,7 @@ public class NewStudyCommandTest extends StudyCalendarTestCase {
 
     public void testCreateBlank() throws Exception {
         command.setBase(TemplateSkeletonCreator.BLANK);
+        expect(studyService.getNewStudyName()).andReturn("[Unnamed blank study]");
         expectCreate();
         replayMocks();
         assertBlankStudy(command.create());
@@ -30,6 +33,7 @@ public class NewStudyCommandTest extends StudyCalendarTestCase {
     
     public void testCreateBasic() throws Exception {
         command.setBase(TemplateSkeletonCreator.BASIC);
+        expect(studyService.getNewStudyName()).andReturn("[ABC 1234]");
         expectCreate();
         replayMocks();
         assertBasicStudy(command.create());
@@ -38,6 +42,7 @@ public class NewStudyCommandTest extends StudyCalendarTestCase {
 
     public void testDefaultIsBasic() throws Exception {
         command.setBase(null);
+        expect(studyService.getNewStudyName()).andReturn("[ABC 1234]");
         expectCreate();
         replayMocks();
         assertBasicStudy(command.create());
