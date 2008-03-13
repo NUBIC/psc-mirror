@@ -55,7 +55,13 @@
         <property name="xmlSerializer" ref="studyXmlSerializer"/>
     </bean>
 
-    <bean name="/studies/{study-identifier}/sites/{site-identifier}/subject-assignments"
+    <bean name="/studies/{study-identifier}/template/{amendment-identifier}"
+          id="amendedTemplateResource" autowire="byName" scope="prototype"
+          class="edu.northwestern.bioinformatics.studycalendar.restlets.AmendedTemplateResource">
+        <property name="xmlSerializer" ref="studySnapshotXmlSerializer"/>
+    </bean>
+
+    <bean name="/studies/{study-identifier}/sites/{site-name}/subject-assignments"
           id="subjectAssignmentResource" autowire="byName" scope="prototype"
           class="edu.northwestern.bioinformatics.studycalendar.restlets.RegistrationsResource">
         <property name="xmlSerializer" ref="registrationXmlSerializer"/>
