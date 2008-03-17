@@ -35,6 +35,8 @@ public class ImportTemplateServiceTest extends StudyCalendarTestCase {
     private ChangeDao changeDao;
     private DeltaDao deltaDao;
     private AmendmentDao amendmentDao;
+    private TemplateService templateService;
+    private DeltaService deltaService;
 
     protected void setUp() throws Exception {
         super.setUp();
@@ -124,121 +126,8 @@ public class ImportTemplateServiceTest extends StudyCalendarTestCase {
         verifyMocks();
     }
 
-    public void testDeletePlannedActivities() {
-        List<PlannedActivity> activities = new ArrayList<PlannedActivity>();
-        activities.add(activity4);
-        activities.add(activity5);
-
-        plannedActivityDao.delete(activity4);
-        plannedActivityDao.delete(activity5);
-        replayMocks();
-
-        service.deletePlannedActivities(activities);
-        verifyMocks();
-
-        assertTrue("There should be no planned actiities", activities.isEmpty());
-    }
-
-    public void testDeleteStudySegments() {
-        StudySegment segment0 = createNamedInstance("Segment A", StudySegment.class);
-        StudySegment segment1 = createNamedInstance("Segment B", StudySegment.class);
-
-        List<StudySegment> segments = new ArrayList<StudySegment>();
-        segments.add(segment0);
-        segments.add(segment1);
-
-        studySegmentDao.delete(segment0);
-        studySegmentDao.delete(segment1);
-        replayMocks();
-
-        service.deleteStudySegments(segments);
-        verifyMocks();
-
-        assertTrue("There should be no study segments", segments.isEmpty());
-    }
-
-    public void testDeletePeriods() {
-        Period period0 = createNamedInstance("Period A", Period.class);
-        Period period1 = createNamedInstance("Period B", Period.class);
-
-        Set<Period> periods = new TreeSet<Period>();
-        periods.add(period0);
-        periods.add(period1);
-
-        periodDao.delete(period0);
-        periodDao.delete(period1);
-        replayMocks();
-
-        service.deletePeriods(periods);
-        verifyMocks();
-
-        assertTrue("There should be no periods", periods.isEmpty());
-    }
-
-    public void testDeleteEpochs() {
-        Epoch epoch0 = createNamedInstance("Epoch A", Epoch.class);
-        Epoch epoch1 = createNamedInstance("Epoch B", Epoch.class);
-
-        List<Epoch> epochs = new ArrayList<Epoch>();
-        epochs.add(epoch0);
-        epochs.add(epoch1);
-
-        epochDao.delete(epoch0);
-        epochDao.delete(epoch1);
-        replayMocks();
-
-        service.deleteEpochs(epochs);
-        verifyMocks();
-
-        assertTrue("There should be no epochs", epochs.isEmpty());
-    }
-
-    public void testDeleteDeltas() {
-        Epoch epoch = setId(99, createNamedInstance("Epoch A", Epoch.class));
-        StudySegment segment = createNamedInstance("Segment A", StudySegment.class);
-
-        Change change0 = Add.create(epoch);
-        ((Add)change0).setChildId(99);
-        Change change1 = Remove.create(segment);
-
-        Delta delta0 = Delta.createDeltaFor(new PlannedCalendar(), change0);
-        Delta delta1 = Delta.createDeltaFor(new Epoch(), change1);
-
-        List<Delta<?>> deltas = new ArrayList<Delta<?>>();
-        deltas.add(delta0);
-        deltas.add(delta1);
-
-        deltaDao.delete(delta0);
-        changeDao.delete(change0);
-        expect(daoFinder.findDao(Epoch.class)).andReturn((DomainObjectDao) epochDao);
-        expect(epochDao.getById(99)).andReturn(epoch);
-        epochDao.delete(epoch);
-
-        deltaDao.delete(delta1);
-        changeDao.delete(change1);
-        replayMocks();
-
-        service.deleteDeltas(deltas);
-        verifyMocks();
-
-        assertTrue("There should be no changes in delta0", delta0.getChanges().isEmpty());
-        assertTrue("There should be no changes in delta1", delta1.getChanges().isEmpty());
-        assertTrue("There should be no deltas", deltas.isEmpty());
-    }
-
-    public void testDeleteAmendment() {
-        Amendment amendment = new Amendment();
-
-        amendmentDao.delete(amendment);
-        replayMocks();
-        
-        service.deleteAmendment(amendment);
-        verifyMocks();
-
-
-    }
-
     ////// Helper expect methods
+
     private void expectResolveExistingActivityAndSource(String activityCode, Activity activity, String sourceCode, Source source) {
         expect(activityDao.getByCodeAndSourceName(activityCode, sourceCode)).andReturn(activity);
         sourceDao.save(source);
@@ -289,23 +178,23 @@ public class ImportTemplateServiceTest extends StudyCalendarTestCase {
         studySegmentDao = registerDaoMockFor(StudySegmentDao.class);
         amendmentService = registerMockFor(AmendmentService.class);
         plannedActivityDao = registerDaoMockFor(PlannedActivityDao.class);
+        templateService = registerMockFor(TemplateService.class);
+        deltaService = registerMockFor(DeltaService.class);
     }
 
     private ImportTemplateService service() {
         ImportTemplateService service = new ImportTemplateService();
         service.setStudyDao(studyDao);
-        service.setEpochDao(epochDao);
         service.setDeltaDao(deltaDao);
         service.setChangeDao(changeDao);
         service.setDaoFinder(daoFinder);
         service.setSourceDao(sourceDao);
-        service.setPeriodDao(periodDao);
         service.setActivityDao(activityDao);
         service.setAmendmentDao(amendmentDao);
         service.setStudyService(studyService);
-        service.setStudySegmentDao(studySegmentDao);
+        service.setDeltaService(deltaService);
         service.setAmendmentService(amendmentService);
-        service.setPlannedActivityDao(plannedActivityDao);
+        service.setTemplateService(templateService);
         return service;
     }
 

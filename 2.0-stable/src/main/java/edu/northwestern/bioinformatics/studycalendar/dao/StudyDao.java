@@ -16,7 +16,7 @@ import java.util.List;
  * @author Rhett Sutphin
  */
 @Transactional(readOnly = true)
-public class StudyDao extends StudyCalendarMutableDomainObjectDao<Study> {
+public class StudyDao extends StudyCalendarMutableDomainObjectDao<Study> implements DeletableDomainObjectDao<Study> {
 
     @Override
     public Class<Study> domainClass() {
