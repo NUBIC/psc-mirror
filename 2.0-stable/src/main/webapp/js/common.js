@@ -27,6 +27,96 @@ SC.doAsyncLink = function(anchor, options, indicator) {
     }, options));
 }
 
+SC.SessionExpiredLogic = Class.create( {
+    initialize: function(url) {
+        this.url = url
+        this.content =
+            Builder.node('div', {id:'lightbox-content'}, [
+                Builder.node('h1', 'Session Timed Out'),
+                Builder.node('p', 'Your session has expired.  To continue, please ', [
+                        Builder.node('a', {href:this.url}, 'log in again.')
+                        ])
+                ])
+    },
+    execute: function() {
+        $('lightbox').update(this.content)
+        LB.Lightbox.activate()
+    }
+})
+
+SC.UserActiveChallenge = Class.create( {
+    initialize: function(url) {
+        this.url = url
+        this.button = Builder.node('input', {type:'button', value:'Confirm Active', id:'user-active-button'});
+        this.add_submit_listener()
+    },
+    execute: function() {
+        $('lightbox').update(
+                Builder.node('div', {id:'lightbox-content'}, [
+                    Builder.node('h1', 'Your Session is About to Expire'),
+                    Builder.node('p', 'Please confirm that you are still active by clicking the button below.'),
+                    this.button
+                    ]))
+
+        LB.Lightbox.activate()
+    },
+    add_submit_listener: function() {
+        Event.observe(this.button, 'click', function(e) {
+            new Ajax.Request(
+                    this.url, {
+                method:'get',
+                onSuccess: function(transport){
+                    LB.Lightbox.deactivate()
+                }
+            })
+        }.bindAsEventListener(this))
+    }
+})
+
+SC.SessionTimer = Class.create(PeriodicalExecuter, {
+    initialize: function($super, expire_logic, time_in_seconds) {
+        $super(this.expire, time_in_seconds)
+        this.expire_logic = expire_logic
+    },
+    reset: function() {
+        this.stop()
+        this.registerCallback()
+    },
+    expire: function() {
+        this.expire_logic.execute()
+        this.stop()
+    }
+})
+
+SC.HttpSessionExpirationManager = Class.create({
+    initialize: function(session_warning_in_seconds, session_timeout_in_seconds, session_alive_url, login_url) {
+        this.timers = []
+        
+        if (session_warning_in_seconds > 0) {
+            this.userChallengeTimer =
+               new SC.SessionTimer(new SC.UserActiveChallenge(session_alive_url), session_warning_in_seconds)
+
+            this.timers.push(this.userChallengeTimer)
+        }
+
+        if (session_timeout_in_seconds > 0) {
+            this.httpSessionTimer =
+                new SC.SessionTimer(new SC.SessionExpiredLogic(login_url), session_timeout_in_seconds)
+
+            this.timers.push(this.httpSessionTimer)
+        }
+
+        Ajax.Responders.register({
+            timers:this.timers,
+            onComplete: function() {
+                this.timers.each(function(timer) {
+                    timer.reset()
+                })
+            }
+        })
+    }
+})
+
 ////// COOKIES
 
 /** Main fns based on http://www.quirksmode.org/js/cookies.html */
