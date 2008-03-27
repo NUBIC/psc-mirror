@@ -4,6 +4,7 @@ import edu.northwestern.bioinformatics.studycalendar.domain.Role;
 import edu.northwestern.bioinformatics.studycalendar.domain.StudySite;
 import edu.northwestern.bioinformatics.studycalendar.domain.delta.AmendmentApproval;
 import edu.northwestern.bioinformatics.studycalendar.service.AmendmentService;
+import edu.northwestern.bioinformatics.studycalendar.xml.writers.AmendmentApprovalXmlSerializer;
 import org.restlet.Context;
 import org.restlet.data.MediaType;
 import org.restlet.data.Method;
@@ -24,10 +25,10 @@ public class AmendmentApprovalsResource extends StudySiteCollectionResource<Amen
     @Override
     public void init(Context context, Request request, Response response) {
         super.init(context, request, response);
-        setAuthorizedFor(Method.GET, Role.SUBJECT_COORDINATOR);
-        setAuthorizedFor(Method.POST, Role.SUBJECT_COORDINATOR);
+        setAllAuthorizedFor(Method.GET);
+        setAuthorizedFor(Method.POST, Role.SITE_COORDINATOR);
+        ((AmendmentApprovalXmlSerializer) xmlSerializer).setStudy(getStudy());
     }
-
 
     @Override
     protected Representation createXmlRepresentation(StudySite studySite) throws ResourceException {
@@ -44,7 +45,6 @@ public class AmendmentApprovalsResource extends StudySiteCollectionResource<Amen
     }
 
     ////// CONFIGURATION
-
 
     @Required
     public void setAmendmentService(AmendmentService amendmentService) {

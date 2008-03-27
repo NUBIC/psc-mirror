@@ -41,7 +41,7 @@ public class ImportTemplateService {
         // Check if development amendment is persisted and if it is, delete it
         if (study.getDevelopmentAmendment() != null) {
             String amendmentNaturalKey = study.getDevelopmentAmendment().getNaturalKey();
-            Amendment dev = amendmentDao.getByNaturalKey(amendmentNaturalKey);
+            Amendment dev = amendmentDao.getByNaturalKey(amendmentNaturalKey, study);
             if (dev != null) {
                 amendmentService.deleteDevelopmentAmendmentOnly(study);
             }
@@ -66,7 +66,7 @@ public class ImportTemplateService {
             // Check if development amendment is persisted and if it is, delete it
             if (existingStudy.getDevelopmentAmendment() != null) {
                 String amendmentNaturalKey = existingStudy.getDevelopmentAmendment().getNaturalKey();
-                Amendment dev = amendmentDao.getByNaturalKey(amendmentNaturalKey);
+                Amendment dev = amendmentDao.getByNaturalKey(amendmentNaturalKey, existingStudy);
                 if (dev != null) {
                     amendmentService.deleteDevelopmentAmendmentOnly(existingStudy);
                 }

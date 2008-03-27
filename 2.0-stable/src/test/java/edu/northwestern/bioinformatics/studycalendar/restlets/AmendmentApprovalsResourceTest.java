@@ -8,8 +8,10 @@ import edu.northwestern.bioinformatics.studycalendar.domain.delta.Amendment;
 import edu.northwestern.bioinformatics.studycalendar.domain.delta.AmendmentApproval;
 import edu.northwestern.bioinformatics.studycalendar.service.SubjectService;
 import edu.northwestern.bioinformatics.studycalendar.xml.CapturingStudyCalendarXmlFactoryStub;
+import edu.northwestern.bioinformatics.studycalendar.xml.writers.AmendmentApprovalXmlSerializer;
 import static edu.nwu.bioinformatics.commons.DateUtils.createDate;
 import static org.easymock.EasyMock.expect;
+import org.easymock.classextension.EasyMock;
 import org.restlet.data.Method;
 import org.restlet.data.Status;
 
@@ -57,6 +59,8 @@ public class AmendmentApprovalsResourceTest extends AuthorizedResourceTestCase<A
 
         request.getAttributes().put(UriTemplateParameters.STUDY_IDENTIFIER.attributeName(), STUDY_IDENTIFIER_ENCODED);
         request.getAttributes().put(UriTemplateParameters.SITE_IDENTIFIER.attributeName(), SITE_IDENTIFIER);
+
+        xmlSerializer = registerMockFor(AmendmentApprovalXmlSerializer.class);
     }
 
     @Override
@@ -101,7 +105,7 @@ public class AmendmentApprovalsResourceTest extends AuthorizedResourceTestCase<A
     }
 
     public void testGetWithAuthorizedRole() {
-        assertRolesAllowedForMethod(Method.GET, Role.SUBJECT_COORDINATOR);
+        assertRolesAllowedForMethod(Method.GET, Role.values());
     }
 
     ////// POST
@@ -117,7 +121,7 @@ public class AmendmentApprovalsResourceTest extends AuthorizedResourceTestCase<A
     }
 
     public void testPutWithAuthorizedRole() {
-        assertRolesAllowedForMethod(Method.POST, Role.SUBJECT_COORDINATOR);
+        assertRolesAllowedForMethod(Method.POST, Role.SITE_COORDINATOR);
     }
 
     ////// Helper Methods
@@ -125,5 +129,6 @@ public class AmendmentApprovalsResourceTest extends AuthorizedResourceTestCase<A
     private void expectResolvedStudyAndSite(Study expectedStudy, Site expectedSite) {
         expect(studyDao.getByAssignedIdentifier(STUDY_IDENTIFIER)).andReturn(expectedStudy);
         expect(siteDao.getByAssignedIdentifier(SITE_IDENTIFIER)).andReturn(expectedSite);
+        ((AmendmentApprovalXmlSerializer) xmlSerializer).setStudy(expectedStudy);
     }
 }
