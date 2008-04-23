@@ -50,8 +50,12 @@ public class Configuration extends DatabaseBackedConfiguration {
         STUDY_PAGE_URL = PROPERTIES.add(new TemplateConfigurationProperty("studyPageUrl"));
     
 
-    ////// PSC-SPECIFIC LOGIC
+    public static final ConfigurationProperty<Boolean>
+            ENABLE_ASSIGNING_SUBJECT = PROPERTIES.add(new ConfigurationProperty.Bool("enableAssigningSubject"));
+    public static final ConfigurationProperty<Boolean>
+            ENABLE_CREATING_TEMPLATE = PROPERTIES.add(new ConfigurationProperty.Bool("enableCreatingTemplate"));    
 
+    ////// PSC-SPECIFIC LOGIC
     public boolean getExternalAppsConfigured() {
         return get(CAAERS_BASE_URL) != null || get(LABVIEWER_BASE_URL) != null || get(PATIENT_PAGE_URL) != null;
     }
