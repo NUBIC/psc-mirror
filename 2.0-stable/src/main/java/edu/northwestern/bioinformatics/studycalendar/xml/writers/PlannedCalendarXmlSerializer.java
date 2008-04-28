@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Required;
 
 import java.util.List;
 
-public class PlannedCalendarXmlSerializer extends AbstractStudyCalendarXmlSerializer <PlannedCalendar> {
+public class PlannedCalendarXmlSerializer extends AbstractStudyCalendarXmlSerializer<PlannedCalendar> {
     public static final String PLANNED_CALENDAR = "planned-calendar";
     private PlannedCalendarDao plannedCalendarDao;
     private boolean serializeEpoch;
@@ -20,6 +20,7 @@ public class PlannedCalendarXmlSerializer extends AbstractStudyCalendarXmlSerial
         serializeEpoch = false;
     }
 
+    @Override
     public Element createElement(PlannedCalendar cal) {
         Element element = element(PLANNED_CALENDAR);
         element.addAttribute(ID, cal.getGridId());
@@ -35,6 +36,7 @@ public class PlannedCalendarXmlSerializer extends AbstractStudyCalendarXmlSerial
         return element;
     }
 
+    @Override
     @SuppressWarnings({"unchecked"})
     public PlannedCalendar readElement(Element element) {
         if (!element.getName().equals(PLANNED_CALENDAR)) {
@@ -42,7 +44,7 @@ public class PlannedCalendarXmlSerializer extends AbstractStudyCalendarXmlSerial
         }
 
         String key = element.attributeValue(ID);
-        PlannedCalendar cal = plannedCalendarDao.getByGridId(key);
+        PlannedCalendar cal = key == null ? null : plannedCalendarDao.getByGridId(key);
         if (cal == null) {
             cal = new PlannedCalendar();
             cal.setGridId(key);
