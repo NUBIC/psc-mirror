@@ -1,14 +1,13 @@
 package edu.northwestern.bioinformatics.studycalendar.service;
 
+import edu.northwestern.bioinformatics.studycalendar.StudyCalendarValidationException;
+import edu.northwestern.bioinformatics.studycalendar.dao.PopulationDao;
 import edu.northwestern.bioinformatics.studycalendar.domain.Population;
 import edu.northwestern.bioinformatics.studycalendar.domain.Study;
-import edu.northwestern.bioinformatics.studycalendar.dao.PopulationDao;
-import edu.northwestern.bioinformatics.studycalendar.StudyCalendarValidationException;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Set;
-
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.annotation.Propagation;
 
 /**
  * @author Rhett Sutphin
@@ -26,7 +25,7 @@ public class PopulationService {
             Population match = populationDao.getByAbbreviation(pop.getStudy(), pop.getAbbreviation());
             if (match != null && !match.equals(pop)) {
                 throw new StudyCalendarValidationException("%s is already using the abbreviation '%s'",
-                    match.getName(), match.getAbbreviation());
+                        match.getName(), match.getAbbreviation());
             }
         }
         populationDao.save(pop);
@@ -54,6 +53,13 @@ public class PopulationService {
             option = first + serial;
             if (!used.contains(option)) return option;
             serial++;
+        }
+    }
+
+    @Transactional(readOnly = false)
+    public void delete(final Set<Population> populations) {
+        for (Population population : populations) {
+            populationDao.delete(population);
         }
     }
 
