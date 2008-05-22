@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN"
-    "http://www.springframework.org/dtd/spring-beans.dtd">
 <beans
         xmlns="http://www.springframework.org/schema/beans"
         xmlns:tx="http://www.springframework.org/schema/tx"
@@ -11,9 +9,16 @@
         default-lazy-init="true">
     <tx:annotation-driven proxy-target-class="true"/>
 
-
-    <bean
-		id="adverseEventConsumer" 
-		class="edu.northwestern.bioinformatics.studycalendar.grid.PSCAdverseEventConsumer"/>
+    <import resource="classpath:applicationContext-dao.xml"></import>
+    <import resource="classpath:applicationContext-api.xml"/>
+    <import resource="classpath:applicationContext-command.xml"></import>
+    <import resource="classpath:applicationContext-db.xml"/>
+    <import resource="classpath:applicationContext-security.xml"/>
+    <import resource="classpath:applicationContext-service.xml"/>
+    <import resource="classpath:applicationContext-spring.xml"/>
+    
+    <bean id="adverseEventConsumer" class="edu.northwestern.bioinformatics.studycalendar.grid.PSCAdverseEventConsumer">
+        <property name="scheduledCalendarService" ref="scheduledCalendarService"></property>
+    </bean>
 
 </beans>

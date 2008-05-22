@@ -21,12 +21,12 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Required;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Assumptions: 1. Site should already be existing in DB..
@@ -123,23 +123,23 @@ public class PSCStudyConsumer implements StudyConsumerI {
         Study study = studyService.getStudyByAssignedIdentifier(ccIdentifier);
 
         if (study == null) {
-            String message = "Exception while rollback study..no study found with given identifier:"+ccIdentifier;
+            String message = "Exception while rollback study..no study found with given identifier:" + ccIdentifier;
             throw getInvalidStudyException(message);
         }
         //check if study was created by the grid service or not
 
         boolean checkIfEntityWasCreatedByGridService = auditHistoryRepository.checkIfEntityWasCreatedByUrl(study.getClass(), study.getId(), studyConsumerGridServiceUrl);
 
-        if(!checkIfEntityWasCreatedByGridService){
+        if (!checkIfEntityWasCreatedByGridService) {
             logger.debug("Study was not created by the grid service url:" + studyConsumerGridServiceUrl + " so can not rollback this study:" + study.getId());
             return;
         }
-        logger.info("Study (id:"+ study.getId()+") was created by the grid service url:" + studyConsumerGridServiceUrl);
+        logger.info("Study (id:" + study.getId() + ") was created by the grid service url:" + studyConsumerGridServiceUrl);
 
         //check if this study was created one minute before or not
         Calendar calendar = Calendar.getInstance();
 
-        boolean checkIfStudyWasCreatedOneMinuteBeforeCurrentTime =auditHistoryRepository.
+        boolean checkIfStudyWasCreatedOneMinuteBeforeCurrentTime = auditHistoryRepository.
                 checkIfEntityWasCreatedMinutesBeforeSpecificDate(study.getClass(), study.getId(), calendar, 1);
         try {
             if (checkIfStudyWasCreatedOneMinuteBeforeCurrentTime) {
@@ -150,7 +150,7 @@ public class PSCStudyConsumer implements StudyConsumerI {
             }
         }
         catch (Exception expception) {
-            String message = "Exception while rollback study," + expception.getMessage()+expception.getClass();
+            String message = "Exception while rollback study," + expception.getMessage() + expception.getClass();
             expception.printStackTrace();
             throw getInvalidStudyException(message);
         }
@@ -178,10 +178,12 @@ public class PSCStudyConsumer implements StudyConsumerI {
 
         ArmType[] armTypes = treatmentEpochType.getArm();
         List<String> armNames = new ArrayList<String>();
-        for (ArmType armType : armTypes) {
-            armNames.add(armType.getName());
+        if (armTypes != null) {
+            for (ArmType armType : armTypes) {
+                armNames.add(armType.getName());
+            }
+            epoch = Epoch.create(treatmentEpochType.getName(), armNames.toArray(new String[0]));
         }
-        epoch = Epoch.create(treatmentEpochType.getName(), armNames.toArray(new String[0]));
         return epoch;
     }
 
@@ -196,22 +198,24 @@ public class PSCStudyConsumer implements StudyConsumerI {
             throws StudyCreationException, InvalidStudyException {
 
         List<StudySite> studySites = new ArrayList<StudySite>();
-        for (StudyOrganizationType studyOrganizationType : studyOrganizationTypes) {
-            StudySite studySite = null;
-            if (studyOrganizationType instanceof StudySiteType) {
-                studySite = new StudySite();
-                studySite.setSite(fetchSite(studyOrganizationType.getHealthcareSite(0).getNciInstituteCode()));
-                studySite.setStudy(study);
-                studySite.setGridId(studyOrganizationType.getGridId());
+        if (studyOrganizationTypes != null) {
+            for (StudyOrganizationType studyOrganizationType : studyOrganizationTypes) {
+                StudySite studySite = null;
+                if (studyOrganizationType instanceof StudySiteType) {
+                    studySite = new StudySite();
+                    studySite.setSite(fetchSite(studyOrganizationType.getHealthcareSite(0).getNciInstituteCode()));
+                    studySite.setStudy(study);
+                    studySite.setGridId(studyOrganizationType.getGridId());
+                }
+                studySites.add(studySite);
             }
-            studySites.add(studySite);
-        }
-        if (studySites.size() == 0 || ArrayUtils.isEmpty(studyOrganizationTypes)) {
-            String message = "No sites is associated to this study" + study.getLongTitle();
-            throw getStudyCreationException(message);
+            if (studySites.size() == 0 || ArrayUtils.isEmpty(studyOrganizationTypes)) {
+                String message = "No sites is associated to this study" + study.getLongTitle();
+                throw getStudyCreationException(message);
 
+            }
+            study.setStudySites(studySites);
         }
-        study.setStudySites(studySites);
     }
 
     /**
@@ -241,11 +245,14 @@ public class PSCStudyConsumer implements StudyConsumerI {
      */
     String findCoordinatingCenterIdentifier(final gov.nih.nci.ccts.grid.Study studyDto) throws InvalidStudyException {
         String ccIdentifier = null;
-        for (IdentifierType identifierType : studyDto.getIdentifier()) {
-            if (identifierType instanceof OrganizationAssignedIdentifierType
-                    && StringUtils.equals(identifierType.getType(), COORDINATING_CENTER_IDENTIFIER_TYPE)) {
-                ccIdentifier = identifierType.getValue();
-                break;
+        IdentifierType[] identifierTypes = studyDto.getIdentifier();
+        if (identifierTypes != null) {
+            for (IdentifierType identifierType : identifierTypes) {
+                if (identifierType instanceof OrganizationAssignedIdentifierType
+                        && StringUtils.equals(identifierType.getType(), COORDINATING_CENTER_IDENTIFIER_TYPE)) {
+                    ccIdentifier = identifierType.getValue();
+                    break;
+                }
             }
         }
 
