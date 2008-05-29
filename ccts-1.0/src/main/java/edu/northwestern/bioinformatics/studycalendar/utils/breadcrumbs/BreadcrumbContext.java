@@ -1,19 +1,25 @@
 package edu.northwestern.bioinformatics.studycalendar.utils.breadcrumbs;
 
 import edu.northwestern.bioinformatics.studycalendar.StudyCalendarSystemException;
-import edu.northwestern.bioinformatics.studycalendar.service.TemplateService;
 import edu.northwestern.bioinformatics.studycalendar.domain.*;
 import edu.northwestern.bioinformatics.studycalendar.domain.delta.Amendment;
-import org.apache.commons.beanutils.PropertyUtils;
+import edu.northwestern.bioinformatics.studycalendar.service.TemplateService;
+import gov.nih.nci.cabig.ctms.domain.DomainObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
+import org.springframework.beans.BeansException;
 
 import java.lang.reflect.InvocationTargetException;
-
-import gov.nih.nci.cabig.ctms.domain.DomainObject;
+import java.lang.reflect.Method;
 
 /**
  * @author Rhett Sutphin
  */
 public class BreadcrumbContext {
+    private Logger log = LoggerFactory.getLogger(getClass());
+
     private Study study;
     private PlannedCalendar plannedCalendar;
     private Epoch epoch;
@@ -36,27 +42,44 @@ public class BreadcrumbContext {
 
     private TemplateService templateService;
 
+    private BeanWrapper selfWrapper;
+
     public BreadcrumbContext(TemplateService templateService) {
         this.templateService = templateService;
+        selfWrapper = new BeanWrapperImpl(this);
     }
 
     public static BreadcrumbContext create(DomainObject basis, TemplateService templateService) {
         BreadcrumbContext context = new BreadcrumbContext(templateService);
         if (basis != null) {
-            StringBuilder propertyName = new StringBuilder(basis.getClass().getSimpleName());
-            propertyName.setCharAt(0, Character.toLowerCase(propertyName.charAt(0)));
-            try {
-                PropertyUtils.setProperty(context, propertyName.toString(), basis);
-            } catch (NoSuchMethodException e) {
-                throw new StudyCalendarSystemException("No setter for " + propertyName.toString() + " of type " + basis.getClass().getName(), e);
-            } catch (IllegalAccessException e) {
-                throw new StudyCalendarSystemException("No setter for " + propertyName.toString() + " of type " + basis.getClass().getName(), e);
-            } catch (InvocationTargetException e) {
-                throw new StudyCalendarSystemException("No setter for " + propertyName.toString() + " of type " + basis.getClass().getName(), e);
+            Method[] methods = BreadcrumbContext.class.getMethods();
+            for (Method method : methods) {
+                if (method.getParameterTypes().length == 1) {
+                    if (method.getParameterTypes()[0].isAssignableFrom(basis.getClass())) {
+                        try {
+                            method.invoke(context, basis);
+                        } catch (IllegalAccessException e) {
+                            throw new StudyCalendarSystemException("Can not invoke method with context " + context.toString() + " with parametere " + basis.getClass().getName(), e);
+                        } catch (InvocationTargetException e) {
+                            throw new StudyCalendarSystemException("Can not invoke method with context " + context.toString() + " with parametere " + basis.getClass().getName(), e);
+                        }
+                    }
+                }
             }
         }
         return context;
     }
+
+    public Object getProperty(String path) {
+        try {
+            return selfWrapper.getPropertyValue(path);
+        } catch (BeansException beansException) {
+            log.debug("Could not resolve " + path + " in BreadcrumbContext", beansException);
+            return null;
+        }
+    }
+
+    ////// SETTERS
 
     public void setSite(Site site) {
         this.site = site;
@@ -111,7 +134,10 @@ public class BreadcrumbContext {
     public void setStudySubjectAssignment(StudySubjectAssignment studySubjectAssignment) {
         if (studySubjectAssignment == null) return;
         setSubject(studySubjectAssignment.getSubject());
-        setPlannedCalendar(studySubjectAssignment.getStudySite().getStudy().getPlannedCalendar());
+        if (studySubjectAssignment.getStudySite() != null) {
+            setPlannedCalendar(studySubjectAssignment.getStudySite().getStudy().getPlannedCalendar());
+            setSite(studySubjectAssignment.getStudySite().getSite());
+        }
         this.studySubjectAssignment = studySubjectAssignment;
     }
 
