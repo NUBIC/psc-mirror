@@ -48,6 +48,9 @@ public class ScheduledActivityReportResourceTest extends AuthorizedResourceTestC
         FILTER_PROPERTIES.remove("actualActivityDate");
         FILTER_PROPERTIES.add("actualActivityDate.start");
         FILTER_PROPERTIES.add("actualActivityDate.stop");
+        FILTER_PROPERTIES.remove("idealDate");
+        FILTER_PROPERTIES.add("idealDate.start");
+        FILTER_PROPERTIES.add("idealDate.stop");
     }
 
     private ActivityTypeDao activityTypeDao;

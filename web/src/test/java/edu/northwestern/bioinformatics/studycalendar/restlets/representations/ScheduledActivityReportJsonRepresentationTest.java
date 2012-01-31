@@ -122,8 +122,8 @@ public class ScheduledActivityReportJsonRepresentationTest extends JsonRepresent
     }
 
     public void testReturnedFiltersIncludeEndIdealDate() throws Exception {
-        filters.getIdealDate().setStart(DateTools.createDate(2009, Calendar.APRIL, 19));
-        assertEquals("Wrong value", "2009-04-19", writeAndGetFilters().optString("start_end_date"));
+        filters.getIdealDate().setStop(DateTools.createDate(2009, Calendar.APRIL, 19));
+        assertEquals("Wrong value", "2009-04-19", writeAndGetFilters().optString("end_ideal_date"));
     }
 
     public void testReturnedFiltersIncludeActivityTypes() throws Exception {
